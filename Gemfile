@@ -29,7 +29,7 @@ group :development do
   gem 'yard'
   gem 'redcarpet', '~> 2.0'
   gem 'pry'
-  gem 'beaker', :require => false, :git => 'https://github.com/puppetlabs/beaker', :ref => 'dbac20fe9'
+  gem 'beaker'
   gem 'beaker-rspec', :require => false
   gem 'vagrant-wrapper', :require => false
 
