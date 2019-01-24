@@ -1,70 +1,47 @@
+---
+sudo: false
+dist: trusty
 language: ruby
+cache: bundler
+before_install:
+  - bundle -v
+  - rm -f Gemfile.lock
+  - gem update --system
+  - gem --version
+  - bundle -v
+script:
+  - 'bundle exec rake $CHECK'
+bundler_args: --without system_tests
 rvm:
-  - 1.8.7
-  - 1.9.3
-  - 2.0.0
-notifications:
-  email:
-   - dcleal@redhat.com
-   - raphael.pinson@camptocamp.com
+  - 2.5.1
 env:
-  # Most tests with oldest supported ruby-augeas
-  - PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-  - PUPPET=3.0.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-  - PUPPET=3.2.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-  # Test the latest ruby-augeas (~>)
-  - PUPPET=3.2.0 RUBY_AUGEAS=0.5
-  - PUPPET=3.4 RUBY_AUGEAS=0.5
-  # Test other versions of Augeas
-  - PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=0.10.0
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=0.10.0
-  - PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.0.0
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.0.0
-  - PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-  - PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.2.0
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.2.0
-  # Issue #83: test old Augeas with new lenses
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.0.0 LENSES=HEAD
-  - PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0 LENSES=HEAD
-  - PUPPET=3.4 RUBY_AUGEAS=0.5 AUGEAS=1.0.0 LENSES=HEAD
-  - PUPPET=3.4 RUBY_AUGEAS=0.5 AUGEAS=1.1.0 LENSES=HEAD
+  global:
+    - BEAKER_PUPPET_COLLECTION=puppet6 PUPPET_GEM_VERSION="~> 6.0"
 matrix:
   fast_finish: true
-  exclude:
-    # No support for Ruby 2.0 before Puppet 3.2.0 and ruby-augeas 0.5
-    - rvm: 2.0.0
-      env: PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-    - rvm: 2.0.0
-      env: PUPPET=3.0.0 RUBY_AUGEAS=0.3.0
-    - rvm: 2.0.0
-      env: PUPPET=3.2.0 RUBY_AUGEAS=0.3.0
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0
-    - rvm: 2.0.0
-      env: PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=0.10.0
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=0.10.0
-    - rvm: 2.0.0
-      env: PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.0.0
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.0.0
-    - rvm: 2.0.0
-      env: PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-    - rvm: 2.0.0
-      env: PUPPET=2.7.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.2.0
-    - rvm: 2.0.0
-      env: PUPPET=3.0.0 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.2.0
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.0.0 LENSES=HEAD
-    - rvm: 2.0.0
-      env: PUPPET=3.4 RUBY_AUGEAS=0.3.0 AUGEAS=1.1.0 LENSES=HEAD
-install:
-  - "travis_retry ./.travis.sh"
-script:
-  - AUGEAS_LENS_LIB=augeas/lenses bundle exec rake
+  include:
+    -
+      env: CHECK="syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop"
+    -
+      env: CHECK=parallel_spec
+    -
+      env: PUPPET_GEM_VERSION="~> 5.0" CHECK=parallel_spec
+      rvm: 2.4.4
+    -
+      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec
+      rvm: 2.1.9
+branches:
+  only:
+    - master
+    - /^v\d/
+notifications:
+  email: false
+deploy:
+  provider: puppetforge
+  user: puppet
+  password:
+    secure: ""
+  on:
+    tags: true
+    all_branches: true
+    condition: "$DEPLOY_TO_FORGE = yes"

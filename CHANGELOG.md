@@ -1,9 +1,37 @@
 # Changelog
 
+## 2.1.3
+
+- Fix range for all dependencies in metadata.json
+
+## 2.1.2
+
+- Fix metadata.json
+
+## 2.1.1
+
+- Fix spec tests for shellvar support
+
+## 2.1.0
+
+- Add ssh_config type & provider
+
 ## 2.0.0
 
 - Use a base type/provider with inheritance to distribute the lib
 - Split lib, types and providers into separate modules
+
+## 1.2.0
+
+- API
+    * add next_seq method
+
+- Providers
+    * fix creation of multiple resources using seq entries under Puppet 3.4, fixes #101
+    * pam: obey file target or service, fixes #105
+    * pam: arguments default to [], fixes #100
+    * pam: add “control_is_param” parameter to decide whether “control” is a resource identifier or property, fixes #114
+    * sysctl: fix tests under latest Augeas
 
 ## 1.1.0
 

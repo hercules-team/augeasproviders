@@ -1,44 +1,48 @@
-require 'pathname'
-dir = Pathname.new(__FILE__).parent
-$LOAD_PATH.unshift(dir, File.join(dir, 'fixtures/modules/augeasproviders_core/spec/lib'), File.join(dir, '..', 'lib'))
-
-require 'rubygems'
-
-require 'simplecov'
-unless RUBY_VERSION =~ /^1\.8/
-  require 'coveralls'
-  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-end
-SimpleCov.start do
-  add_group "AugeasProviders Libs", "/lib/augeasproviders/"
-  add_group "Puppet Types", "/lib/puppet/type/"
-  add_group "Puppet Providers", "/lib/puppet/provider/"
-  add_group "Augeas Spec Lib", "/spec/lib/"
-
-  add_filter "/spec/fixtures/"
-  add_filter "/spec/unit/"
-  add_filter "/spec/support/"
-end
+# frozen_string_literal: true
 
 require 'puppetlabs_spec_helper/module_spec_helper'
-require 'augeas_spec'
+require 'rspec-puppet-facts'
 
-Puppet[:modulepath] = File.join(dir, 'fixtures', 'modules')
+require 'spec_helper_local' if File.file?(File.join(File.dirname(__FILE__), 'spec_helper_local.rb'))
 
-# There's no real need to make this version dependent, but it helps find
-# regressions in Puppet
-#
-# 1. Workaround for issue #16277 where default settings aren't initialised from
-# a spec and so the libdir is never initialised (3.0.x)
-# 2. Workaround for 2.7.20 that now only loads types for the current node
-# environment (#13858) so Puppet[:modulepath] seems to get ignored
-# 3. Workaround for 3.5 where context hasn't been configured yet,
-# ticket https://tickets.puppetlabs.com/browse/MODULES-823
-#
-ver = Gem::Version.new(Puppet.version.split('-').first)
-if Gem::Requirement.new("~> 2.7.20") =~ ver || Gem::Requirement.new("~> 3.0.0") =~ ver || Gem::Requirement.new("~> 3.5") =~ ver
-  Dir["#{dir}/fixtures/modules/*/lib"].each { |l| $LOAD_PATH.unshift(l) }
+include RspecPuppetFacts
+
+default_facts = {
+  puppetversion: Puppet.version,
+  facterversion: Facter.version,
+}
+
+default_fact_files = [
+  File.expand_path(File.join(File.dirname(__FILE__), 'default_facts.yml')),
+  File.expand_path(File.join(File.dirname(__FILE__), 'default_module_facts.yml')),
+]
+
+default_fact_files.each do |f|
+  next unless File.exist?(f) && File.readable?(f) && File.size?(f)
+
+  begin
+    default_facts.merge!(YAML.safe_load(File.read(f)))
+  rescue => e
+    RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e}"
+  end
 end
 
-# Load all shared contexts and shared examples
-Dir["#{dir}/support/**/*.rb"].sort.each {|f| require f}
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
+
+RSpec.configure do |c|
+  c.default_facts = default_facts
+  c.before :each do
+    # set to strictest setting for testing
+    # by default Puppet runs at warning level
+    Puppet.settings[:strict] = :warning
+  end
+end
+
+def ensure_module_defined(module_name)
+  module_name.split('::').reduce(Object) do |last_module, next_module|
+    last_module.const_set(next_module, Module.new) unless last_module.const_defined?(next_module, false)
+    last_module.const_get(next_module, false)
+  end
+end
+
+# 'spec_overrides' from sync.yml will appear below this line

@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'augeasproviders::instances' do
-  it { should create_class('augeasproviders::instances') }
-  it { should contain_class('augeasproviders::params') }
+  it { is_expected.to create_class('augeasproviders::instances') }
+  it { is_expected.to contain_class('augeasproviders::params') }
 
   context "when resource_defaults => 'foo'" do
-    let(:params) {{ :resource_defaults => 'foo' }}
-    it { expect { should create_class('augeasproviders::instances') }.to raise_error(Puppet::Error, /is not a Hash/) }
+    let(:params) { { resource_defaults: 'foo' } }
+
+    it { expect { is_expected.to create_class('augeasproviders::instances') }.to raise_error(Puppet::Error, %r{is not a Hash}) }
   end
 
   [

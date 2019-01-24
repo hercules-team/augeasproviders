@@ -13,6 +13,7 @@ class augeasproviders::instances (
   $pg_hba_hash                = $augeasproviders::params::pg_hba_hash,
   $puppet_auth_hash           = $augeasproviders::params::puppet_auth_hash,
   $shellvar_hash              = $augeasproviders::params::shellvar_hash,
+  $ssh_config_hash            = $augeasproviders::params::ssh_config_hash,
   $sshd_config_hash           = $augeasproviders::params::sshd_config_hash,
   $sshd_config_subsystem_hash = $augeasproviders::params::sshd_config_subsystem_hash,
   $sysctl_hash                = $augeasproviders::params::sysctl_hash,
@@ -75,6 +76,11 @@ class augeasproviders::instances (
   if $shellvar_hash and !empty($shellvar_hash) {
     validate_hash($shellvar_hash)
     create_resources(shellvar, $shellvar_hash, $resource_defaults['shellvar'])
+  }
+
+  if $ssh_config_hash and !empty($ssh_config_hash) {
+    validate_hash($ssh_config_hash)
+    create_resources(ssh_config, $ssh_config_hash, $resource_defaults['ssh_config'])
   }
 
   if $sshd_config_hash and !empty($sshd_config_hash) {

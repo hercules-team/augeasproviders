@@ -18,9 +18,10 @@ else
 
   PKG_VERSION="=${AUGEAS}*"
   # Add PPA
-  # We only have working PPAs for precise for 1.0.0 and 1.1.0 for now...
   sudo add-apt-repository -y ppa:raphink/augeas-1.0.0
   sudo add-apt-repository -y ppa:raphink/augeas-1.1.0
+  sudo add-apt-repository -y ppa:raphink/augeas-1.2.0
+  sudo add-apt-repository -y ppa:raphink/augeas-1.3.0
 fi
 sudo add-apt-repository -y ppa:raphink/augeas
 sudo apt-get update

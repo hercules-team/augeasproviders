@@ -59,6 +59,11 @@ class augeasproviders::params {
     default => $::augeasproviders_shellvar_hash,
   }
 
+  $ssh_config_hash = $::augeasproviders_ssh_config_hash ? {
+    undef   => false,
+    default => $::augeasproviders_ssh_config_hash,
+  }
+
   $sshd_config_hash = $::augeasproviders_sshd_config_hash ? {
     undef   => false,
     default => $::augeasproviders_sshd_config_hash,
