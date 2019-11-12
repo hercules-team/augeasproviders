@@ -47,17 +47,17 @@ The following example is the same as above but using a top-scope variable.
 
 #### Parameters
 
-#####`TYPE`_hash
+##### `TYPE`_hash
 
 All types have a `TYPE`_hash parameter, where `TYPE` is the resource type.  These parameters accept a Hash to define that type's resources.
 
-#####`resource_defaults`
+##### `resource_defaults`
 
 A Hash that contains the default values used to create each resource.  See *manifests/params.pp* for the format used.
 
 #### Variables
 
-#####augeasproviders\_`TYPE`\_hash
+##### augeasproviders\_`TYPE`\_hash
 
 All types have a augeasproviders\_`TYPE`\_hash variable, where `TYPE` is the resource type.  These variables accept a Hash to define that type's resources.
 
