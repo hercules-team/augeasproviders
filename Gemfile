@@ -22,14 +22,14 @@ gem 'ruby-augeas', rbaugversion
 group :development do
   gem 'puppet-lint'
   gem 'puppet-syntax'
-  gem 'puppetlabs_spec_helper', '>= 0.4.1'
+  gem 'puppetlabs_spec_helper', '~> 2.0'
   gem 'rake'
-  gem 'rspec-puppet', :git => 'https://github.com/rodjek/rspec-puppet.git', :ref => '544b168'
+  gem 'rspec-puppet', '~> 2.0'
   gem 'simplecov'
   gem 'yard'
   gem 'redcarpet', '~> 2.0'
   gem 'pry'
-  gem 'beaker', :require => false, :git => 'https://github.com/puppetlabs/beaker', :ref => 'dbac20fe9'
+  gem 'beaker'
   gem 'beaker-rspec', :require => false
   gem 'vagrant-wrapper', :require => false
 

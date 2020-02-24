@@ -30,3 +30,4 @@ tmtags
 ## VIM
 *.swp
 tags
+Gemfile.lock
