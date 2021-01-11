@@ -111,7 +111,7 @@ GEM
       builder
       nokogiri (>= 1.4.1)
       trollop
-    redcarpet (2.3.0)
+    redcarpet (3.5.1)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec (2.99.0)
@@ -159,7 +159,7 @@ DEPENDENCIES
   puppet-syntax
   puppetlabs_spec_helper (>= 0.4.1)
   rake
-  redcarpet (~> 2.0)
+  redcarpet (~> 3.5)
   rspec-puppet!
   ruby-augeas (~> 0.3)
   simplecov
